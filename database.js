@@ -8,7 +8,7 @@ function connectToMongodb(){
     mongoose.connect(MONGODB_CONNECTION_URL)
 
     mongoose.connection.on("connected", ()=>{
-        console.log("Connected to MongoDB")
+        console.log("Connected to MongoDB successfully!")
     })
 
     mongoose.connection.on("error", (err)=>{
