@@ -14,7 +14,8 @@ const userSchema = new Schema({
 
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 
     password: {
@@ -55,8 +56,12 @@ const userSchema = new Schema({
         type: String,
         required: true,
         default: 'admin',
-        enum: ['staff', 'hod']
-    },
+        enum: ['admin', 'staff', 'hod']
+    }, 
 },
 {timestamps: true}
 );
+
+const userModel = mongoose.model('User', userSchema);
+
+module.exports = userModel;
