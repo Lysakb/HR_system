@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 const userRoute = require("../src/route/userRoute");
+const taskRoute = require("../src/route/task.route");
 // const errorHandler = require("./middleware/errorHandler");
 require("dotenv").config();
 
@@ -21,7 +22,7 @@ app.use(cors());
 
 // Routes
 app.use("/user", userRoute); 
-
+app.use("/task", taskRoute);
 
 
 app.use((err, req, res, next)=>{
