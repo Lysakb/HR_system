@@ -34,4 +34,35 @@ const createUser = async (req, res) => {
     };
 };
 
-module.exports = createUser;
+const getUserById = async(req,res)=>{
+    const id = req.params.id;
+    try{
+        const user = await userModel.findById(id);
+        if(!user){
+          return  res.status(400).send("No users found!")
+        }
+        res.status(200).send(user);
+    }catch(error){
+        res.status(400).send(error.message);
+    }
+}
+
+
+const updateRole = async (req, res)=>{
+    const id = req.params.id;
+    const role = req.body;
+
+    try {
+        const user = await userModel.findByIdAndUpdate(id, role)
+        if(!user){
+            return res.status(500).send("user not found!")
+        }
+        await user.save()
+        res.status(200).send({message: "role updated successfully!", user: user.role})
+        } catch (error) { 
+        res.status(400).send(error.message);
+    }
+}  
+
+
+module.exports = {createUser, updateRole, getUserById};

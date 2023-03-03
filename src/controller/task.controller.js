@@ -4,14 +4,18 @@ const uploadTask = async(req, res)=>{
     const task = req.body;
 
     try {
-        const uploadTask = await taskModel.create({task});
+        const createTask = await taskModel.create(task);
 
-        await uploadTask.save();
+        await createTask.save();
 
-        res.status(200).send(uploadTask);
+        res.status(200).send(createTask);
     } catch (error) {
         res.status(400).send(error.message);
     }
+}
+
+const updateTask = async(req, res)=>{
+    
 }
 
 module.exports = uploadTask;

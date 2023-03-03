@@ -28,11 +28,6 @@ const taskSchema = new Schema({
         
     },
 
-    createdAt: {
-        type: Date,
-        required: true
-    },
-
     doneAt: {
         type: Date,
         required: true
@@ -43,7 +38,9 @@ const taskSchema = new Schema({
         required: true
     }
 
-});
+},
+{timestamps: true}
+);
 
 const taskModel = mongoose.model('Task', taskSchema);
 
