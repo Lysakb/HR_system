@@ -1,16 +1,12 @@
-const taskModel = require("../model/taskModel");
+const taskServices = require("../services/taskServices")
 
-const uploadTask = async(req, res)=>{
-    const task = req.body;
-
+const createTask = async(req, res)=>{
     try {
-        const createTask = await taskModel.create(task);
+        const task = await taskServices.createTask(req.body);
 
-        await createTask.save();
-
-        res.status(200).send(createTask);
+        res.status(task.statusCode).json({task: task});
     } catch (error) {
-        res.status(400).send(error.message);
+        res.status(400).json(error.message);
     }
 }
 
@@ -18,4 +14,4 @@ const updateTask = async(req, res)=>{
     
 }
 
-module.exports = uploadTask;
+module.exports = createTask;

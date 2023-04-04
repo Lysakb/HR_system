@@ -99,7 +99,7 @@ const getUserById = async (params) => {
 const updateRole = async (payload, params) => {
   try {
     const role = payload;
-    const user = await userModel.findByIdAndUpdate( {_id: params.id}, role);
+    const user = await userModel.findByIdAndUpdate({_id: params.id}, role);
 
     if (!user) {
       return buildFailedResponse({message: "User not found"})
