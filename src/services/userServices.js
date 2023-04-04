@@ -42,7 +42,9 @@ const createUser = async (payload) => {
 
     const createdUser = await user.save();
     return buildResponse({message: "User created", data: createdUser})
-  } catch (error) {}
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 const loginUser = async(payload) =>{

@@ -16,7 +16,7 @@ const userRoute = express.Router();
 
 userRoute.post("/", createUserValidator, createUser);
 userRoute.post("/login", loginValidator, loginUser);
-userRoute.put("/update-role/:id", authenticateUser, updateRole);
+userRoute.put("/update-role/:id", authenticateUser, authorization, updateRole);
 userRoute.get("/get/:id", authenticateUser, getUserById);
 userRoute.get("/get", getAllUsers);
 
