@@ -1,6 +1,7 @@
 const userModel = require("../model/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { buildFailedResponse, buildResponse, buildRequest } = require("../utiils/response");
 
 const createUser = async (payload) => {
   try {
@@ -34,16 +35,88 @@ const createUser = async (payload) => {
       role: role,
     });
 
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await userModel.findOne({ email }); 
     if (existingUser) {
-      return res.status(500).send({ message: "User already exists!" });
+      return buildFailedResponse({message: "User already exists"})
     }
 
-    const savedData = await user.save();
-    return savedData;
+    const createdUser = await user.save();
+    return buildResponse({message: "User created", data: createdUser})
   } catch (error) {}
 };
 
+const loginUser = async(payload) =>{
+  try {
+    const { email, password } = payload;
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return buildFailedResponse({message: "User does not exist!"});
+    }
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return buildFailedResponse({message: "Invalid password!, please try again"});
+    }
+
+    const userId = {
+      id: user._id,
+      email: user.email,
+    };
+
+    const token = jwt.sign(userId, process.env.SECRET_KEY, { expiresIn: "1h" });
+
+    const loginuser = await user.save();
+    return buildResponse({message: "Login successful", data: loginuser, token: token})
+  } catch (error) { 
+    throw new Error(error.message);
+  }
+};
+
+const getAllUsers = async (payload) => {
+  try {
+    const user = await userModel.find();
+    if (!user) {
+      return buildFailedResponse({message: "No user found!"});
+    }
+   return buildResponse({data: user})
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getUserById = async (params) => {
+  try {
+    const user = await userModel.findById({_id: params.id});
+    
+    if (!user) {
+      return buildFailedResponse({message: "User not found"});
+    }
+    return buildResponse({data: user});
+  } catch (error) { 
+    throw new Error(error.message);
+  }
+};
+
+const updateRole = async (payload, params) => {
+  try {
+    const role = payload;
+    const user = await userModel.findByIdAndUpdate( {_id: params.id}, role);
+
+    if (!user) {
+      return buildFailedResponse({message: "User not found"})
+    }
+    await user.save();
+    return buildResponse({message: "Role updated successfully!", role: user.role});
+    
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
 module.exports = {
   createUser,
+  loginUser,
+  getAllUsers,
+  getUserById,
+  updateRole
 };

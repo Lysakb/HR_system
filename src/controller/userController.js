@@ -7,89 +7,61 @@ const createUser = async (req, res) => {
   try {
     const data = await userServices.createUser(req.body);
     res
-      .status(201)
-      .json({ message: "User created successfully", data, status: "success" });
+      .status(data.statusCode)
+      .json({ message: data.message, data: data.data, status: data.status});
   } catch (error) {
     res.status(400).json({ message: error.message, status: "failure" });
   }
 };
 
-const userLogin = async (req, res) => {
-  const { email, password } = req.body;
-
+const loginUser = async (req, res) => {
   try {
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      return res
-        .status(400)
-        .send({ message: "User does not exist, please signup" });
-    }
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res
-        .status(400)
-        .send({ message: "Invalid password, please try again" });
-    }
-
-    const userId = {
-      id: user._id,
-      email: user.email,
-    };
-
-    const token = jwt.sign(userId, process.env.SECRET_KEY, { expiresIn: "1h" });
-
-    res.status(200).send({ message: "Login successful!", token });
+    const data = await userServices.loginUser(req.body);
+    res.status(data.statusCode)
+      .json({ message: data.message, data: data.data, status: data.status, token: data.token });
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ message: error.message, status: "failure" });
   }
-};
+}
+
 
 const getAllUsers = async (req, res) => {
   try {
-    const user = await userModel.find();
-    if (!user) {
-      return res.status(400).send("No users found!");
-    }
-    res.status(200).send(user);
+    const data = await userServices.getAllUsers();
+    res
+      .status(data.statusCode)
+      .json({ data: data.data, status: data.status });
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ message: error.message, status: "failure" });
   }
 };
-
+ 
 const getUserById = async (req, res) => {
-  const id = req.params.id;
   try {
-    const user = await userModel.findById(id);
-    if (!user) {
-      return res.status(400).send("No users found!");
-    }
-    res.status(200).send(user);
+    const data = await userServices.getUserById(req.params);
+    res
+      .status(data.statusCode)
+      .json({ data: data.data, status: data.status});
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ message: error.message, status: "failure" });
   }
 };
 
 const updateRole = async (req, res) => {
-  const id = req.params.id;
-  const role = req.body;
-
   try {
-    const user = await userModel.findByIdAndUpdate(id, role);
-    if (!user) {
-      return res.status(500).send("user not found!");
-    }
-    await user.save();
+
+    const data = await userServices.updateRole(req.body, req.params);
     res
-      .status(200)
-      .send({ message: "role updated successfully!", user: user.role });
+      .status(data.statusCode)
+      .json({ message: "login successful", data, status: data.status});
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ message: error.message, status: "failure" });
   }
 };
 
 module.exports = {
   createUser,
-  userLogin,
+  loginUser,
   updateRole,
   getAllUsers,
   getUserById,

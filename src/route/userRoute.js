@@ -3,7 +3,7 @@ const {
   createUser,
   updateRole,
   getUserById,
-  userLogin,
+  loginUser,
   getAllUsers,
 } = require("../controller/userController");
 const authorization = require("../middleware/authorization");
@@ -15,9 +15,9 @@ const {
 const userRoute = express.Router();
 
 userRoute.post("/", createUserValidator, createUser);
-userRoute.post("/login", loginValidator, userLogin);
-userRoute.put("/update-role/:id", authenticateUser, authorization, updateRole);
+userRoute.post("/login", loginValidator, loginUser);
+userRoute.put("/update-role/:id", authenticateUser, updateRole);
 userRoute.get("/get/:id", authenticateUser, getUserById);
-userRoute.get("/get", authenticateUser, getAllUsers);
+userRoute.get("/get", getAllUsers);
 
 module.exports = userRoute;
